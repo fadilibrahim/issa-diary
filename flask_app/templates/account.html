@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <h2>{{ current_user.username }}</h2>
+    <p>{{ current_user.email }}</p>
+</div>
+<div>
+    <form action="" method="post">
+      {{ form.csrf_token }}
+      <div>
+          {{ form.username.label(class="form-control-label green-text") }}
+          {{ form.username(class="form-control form-control-md") }}
+
+          {% if form.username.errors %}
+              <div class="alert alert-warning" role="alert">
+                  {% for error in form.username.errors %}
+                      <span>{{ error }}</span>
+                  {% endfor %}
+              </div>
+          {% endif %}
+      </div>
+      <div>
+          {{ form.submit(class="form-control form-control-lg") }}
+      </div>
+    </form>
+</div>
+<a href={{ url_for('main.user_detail', username=current_user.username) }}>
+    <h4>Click here to see {{ current_user.username }}'s History</h4>
+</a>
+{% endblock %}

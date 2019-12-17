@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <h2>Two-Factor Authentication</h2>
+    </div>
+    <div>
+        Creating diary entries requires two-factor enrollment
+    </div>
+    <p>
+        Use a authenticator app to enroll with Dear Diary
+    </p>
+    <img src={{ url_for('users.qr_code') }} alt="QR Code for 2FA">
+
+    <div>
+        When you're done, you can go to the <a href={{ url_for('users.login') }}>Login page</a>!
+    </div>
+
+
+{% endblock %}

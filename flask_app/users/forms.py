@@ -1,0 +1,48 @@
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_login import current_user
+
+from flask_app.models import User
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=30)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Sign Up')
+
+    def validate_user(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None: raise ValidationError('Username taken')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('Email taken')
+
+class LoginForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    token = StringField('Token', validators=[DataRequired(), Length(min=6, max=6)])
+    submit = SubmitField("Login")
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is None:
+            raise ValidationError("That username does not exist in our database.")
+
+    def validate_token(self, token):
+        user = User.query.filter_by(username=self.username.data).first()
+        if user is not None and not user.verify_totp(token.data):
+            raise ValidationError("Invalid Token")
+
+class UpdateNameForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=30)])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user is not None:
+                raise ValidationError('That username is already taken')
