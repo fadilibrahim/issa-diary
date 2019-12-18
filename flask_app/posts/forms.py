@@ -12,7 +12,7 @@ class CreatePostForm(FlaskForm):
     text = TextAreaField("Text")
 
     submit = SubmitField("Submit Post!")
-    
+
 class EmailForm(FlaskForm):
     email = StringField('Recipient Email:', validators=[DataRequired(), Email()])
     submit = SubmitField("Email Post")
